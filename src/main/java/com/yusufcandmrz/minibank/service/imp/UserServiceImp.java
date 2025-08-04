@@ -29,6 +29,7 @@ public class UserServiceImp implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
     public User register(RegisterRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
@@ -37,6 +38,7 @@ public class UserServiceImp implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
     public User login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
