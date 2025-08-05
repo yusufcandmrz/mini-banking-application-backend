@@ -42,12 +42,12 @@ public class UserServiceImp implements UserService {
     public User login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        return userRepository.findByEmail(request.getEmail())
+        return userRepository.findByUsername(request.getUsername())
                 .orElseThrow();
     }
 }
