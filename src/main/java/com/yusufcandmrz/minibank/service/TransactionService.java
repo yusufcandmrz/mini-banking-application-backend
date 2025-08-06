@@ -1,4 +1,4 @@
 package com.yusufcandmrz.minibank.service;
 
-public class TransactionService {
+public interface TransactionService {
 }

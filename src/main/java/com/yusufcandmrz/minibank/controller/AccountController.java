@@ -1,6 +1,7 @@
 package com.yusufcandmrz.minibank.controller;
 
 import com.yusufcandmrz.minibank.dto.request.AccountCreateRequest;
+import com.yusufcandmrz.minibank.dto.request.AccountSearchRequest;
 import com.yusufcandmrz.minibank.dto.request.AccountUpdateRequest;
 import com.yusufcandmrz.minibank.entity.Account;
 import com.yusufcandmrz.minibank.entity.User;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,16 +28,16 @@ public class AccountController {
     }
 
     @PostMapping()
-    public ResponseEntity<Account> create(@RequestBody AccountCreateRequest request, Authentication authentication) {
-        Account createdAccount = accountService.create(request, authentication.getName());
+    public ResponseEntity<Account> create(@RequestBody AccountCreateRequest request) {
+        Account createdAccount = accountService.create(request);
         return ResponseEntity.ok(createdAccount);
     }
 
-    // TODO: add search API
-    /* @PostMapping
-    public ResponseEntity<?> search() {
-        return new ResponseEntity<>(HttpStatus.OK);
-    } */
+    @PostMapping("/search")
+    public ResponseEntity<?> search(@RequestBody AccountSearchRequest request) {
+        List<Account> accountList = accountService.search(request);
+        return ResponseEntity.ok(accountList);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Account> readById(@PathVariable UUID accountId, Authentication authentication) {
@@ -45,16 +47,14 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Account> updateById(
-            @PathVariable UUID accountId,
-            @RequestBody AccountUpdateRequest request,
-            Authentication authentication) {
-        Account updatedAccount = accountService.updateById(accountId, request, authentication.getName());
+            @PathVariable UUID accountId, @RequestBody AccountUpdateRequest request) {
+        Account updatedAccount = accountService.updateById(accountId, request);
         return ResponseEntity.ok(updatedAccount);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable UUID accountId, Authentication authentication) {
-        accountService.deleteById(accountId, authentication.getName());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteById(@PathVariable UUID accountId) {
+        Account deletedAccount = accountService.deleteById(accountId);
+        return ResponseEntity.ok(deletedAccount);
     }
 }

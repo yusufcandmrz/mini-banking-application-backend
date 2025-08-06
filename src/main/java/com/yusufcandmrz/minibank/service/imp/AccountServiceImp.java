@@ -1,6 +1,7 @@
 package com.yusufcandmrz.minibank.service.imp;
 
 import com.yusufcandmrz.minibank.dto.request.AccountCreateRequest;
+import com.yusufcandmrz.minibank.dto.request.AccountSearchRequest;
 import com.yusufcandmrz.minibank.dto.request.AccountUpdateRequest;
 import com.yusufcandmrz.minibank.entity.Account;
 import com.yusufcandmrz.minibank.entity.User;
@@ -10,6 +11,7 @@ import com.yusufcandmrz.minibank.service.AccountService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,8 +26,8 @@ public class AccountServiceImp implements AccountService {
     }
 
     @Override
-    public Account create(AccountCreateRequest request, String username) {
-        User user = userRepository.findByUsername(username)
+    public Account create(AccountCreateRequest request) {
+        User user = userRepository.findByUsername(request.getUserId().toString())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Account account = new Account();
@@ -38,13 +40,24 @@ public class AccountServiceImp implements AccountService {
     }
 
     @Override
-    public Account readById(UUID accountId, String username) {
-        return findAccountByIdAndOwner(accountId, username);
+    public List<Account> search(AccountSearchRequest request) {
+        return null;
     }
 
     @Override
-    public Account updateById(UUID accountId, AccountUpdateRequest request, String username) {
-        Account account = findAccountByIdAndOwner(accountId, username);
+    public Account readById(UUID accountId, String username) {
+        Account account = checkAccountById(accountId);
+
+        if (!account.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You are not the owner of this account");
+        }
+
+        return account;
+    }
+
+    @Override
+    public Account updateById(UUID accountId, AccountUpdateRequest request) {
+        Account account = checkAccountById(accountId);
         account.setNumber(request.getNumber());
         account.setName(request.getName());
         account.setBalance(request.getBalance());
@@ -52,18 +65,14 @@ public class AccountServiceImp implements AccountService {
     }
 
     @Override
-    public void deleteById(UUID accountId, String username) {
-        accountRepository.delete(findAccountByIdAndOwner(accountId, username));
+    public Account deleteById(UUID accountId) {
+        Account account = checkAccountById(accountId);
+        accountRepository.delete(account);
+        return account;
     }
 
-    private Account findAccountByIdAndOwner(UUID accountId, String username) {
-        Account account = accountRepository.findById(accountId)
+    private Account checkAccountById(UUID accountId) {
+        return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
-
-        if (!account.getUser().getUsername().equals(username)) {
-            throw new RuntimeException("You are not the owner of this account");
-        }
-
-        return account;
     }
 }
