@@ -28,14 +28,14 @@ public class AccountController {
     }
 
     @PostMapping()
-    public ResponseEntity<Account> create(@RequestBody AccountCreateRequest request) {
-        Account createdAccount = accountService.create(request);
+    public ResponseEntity<Account> create(@RequestBody AccountCreateRequest request, Authentication authentication) {
+        Account createdAccount = accountService.create(request, authentication.getName());
         return ResponseEntity.ok(createdAccount);
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> search(@RequestBody AccountSearchRequest request) {
-        List<Account> accountList = accountService.search(request);
+    public ResponseEntity<?> search(@RequestBody AccountSearchRequest request, Authentication authentication) {
+        List<Account> accountList = accountService.search(request, authentication.getName());
         return ResponseEntity.ok(accountList);
     }
 
@@ -47,14 +47,14 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Account> updateById(
-            @PathVariable UUID accountId, @RequestBody AccountUpdateRequest request) {
-        Account updatedAccount = accountService.updateById(accountId, request);
+            @PathVariable UUID accountId, @RequestBody AccountUpdateRequest request, Authentication authentication) {
+        Account updatedAccount = accountService.updateById(accountId, request, authentication.getName());
         return ResponseEntity.ok(updatedAccount);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable UUID accountId) {
-        Account deletedAccount = accountService.deleteById(accountId);
+    public ResponseEntity<?> deleteById(@PathVariable UUID accountId, Authentication authentication) {
+        Account deletedAccount = accountService.deleteById(accountId, authentication.getName());
         return ResponseEntity.ok(deletedAccount);
     }
 }

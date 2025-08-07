@@ -14,5 +14,4 @@ public class AccountCreateRequest {
     private String number;
     private String name;
     private BigDecimal balance;
-    private UUID userId;
 }

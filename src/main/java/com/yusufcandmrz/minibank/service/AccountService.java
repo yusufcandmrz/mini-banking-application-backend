@@ -12,13 +12,13 @@ import java.util.UUID;
 @Service
 public interface AccountService {
 
-    Account create(AccountCreateRequest request);
+    Account create(AccountCreateRequest request, String username);
 
-    List<Account> search(AccountSearchRequest request);
+    List<Account> search(AccountSearchRequest request, String username);
 
     Account readById(UUID accountId, String username);
 
-    Account updateById(UUID accountId, AccountUpdateRequest request);
+    Account updateById(UUID accountId, AccountUpdateRequest request, String username);
 
-    Account deleteById(UUID accountId);
+    Account deleteById(UUID accountId, String username);
 }
