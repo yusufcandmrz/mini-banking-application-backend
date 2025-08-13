@@ -29,6 +29,28 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User register(RegisterRequest request) {
+        if (request.getUsername() == null || request.getUsername().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (!request.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+        if (request.getPassword().length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
