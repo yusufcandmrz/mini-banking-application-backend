@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,18 +43,18 @@ public class AccountServiceImp implements AccountService {
 
     // TODO: write search service
     @Override
-    public List<Account> search(AccountSearchRequest request, String username) {
-        return null;
+    public List<Account> search(AccountSearchRequest request) {
+        return accountRepository.findByNumberContainingOrNameContainingIgnoreCase(request.getNumber(), request.getName());
     }
 
     @Override
     public Account readById(UUID accountId, String username) {
-        return checkAccountOwnership(accountId, username);
+        return findAccountOwnedByUser(accountId, username);
     }
 
     @Override
     public Account updateById(UUID accountId, AccountUpdateRequest request, String username) {
-        Account account = checkAccountOwnership(accountId, username);
+        Account account = findAccountOwnedByUser(accountId, username);
         account.setNumber(request.getNumber());
         account.setName(request.getName());
         account.setBalance(request.getBalance());
@@ -62,12 +63,12 @@ public class AccountServiceImp implements AccountService {
 
     @Override
     public Account deleteById(UUID accountId, String username) {
-        Account account = checkAccountOwnership(accountId, username);
+        Account account = findAccountOwnedByUser(accountId, username);
         accountRepository.delete(account);
         return account;
     }
 
-    private Account checkAccountOwnership(UUID accountId, String username) {
+    private Account findAccountOwnedByUser(UUID accountId, String username) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 

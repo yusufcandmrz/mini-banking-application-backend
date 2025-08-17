@@ -7,6 +7,7 @@ import com.yusufcandmrz.minibank.entity.Account;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -14,7 +15,7 @@ public interface AccountService {
 
     Account create(AccountCreateRequest request, String username);
 
-    List<Account> search(AccountSearchRequest request, String username);
+    List<Account> search(AccountSearchRequest request);
 
     Account readById(UUID accountId, String username);
 
