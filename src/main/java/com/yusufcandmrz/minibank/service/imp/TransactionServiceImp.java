@@ -26,9 +26,9 @@ public class TransactionServiceImp implements TransactionService {
 
     @Override
     @Transactional
-    public Transaction transfer(TransferRequest request) {
-        Account fromAccount = checkAccountById(request.getFromAccountId());
-        Account toAccount = checkAccountById(request.getToAccountId());
+    public Transaction transfer(TransferRequest request, String username) {
+        Account fromAccount = findAccountOwnedByUser(request.getFromAccountId(), username);
+        Account toAccount = findAccount(request.getToAccountId());
 
         Transaction transaction = new Transaction();
         transaction.setFrom(fromAccount);
@@ -58,12 +58,24 @@ public class TransactionServiceImp implements TransactionService {
     }
 
     @Override
-    public List<Transaction> history(UUID accountId) {
+    public List<Transaction> history(UUID accountId, String username) {
+        findAccountOwnedByUser(accountId, username);
         return transactionRepository.findByAccountId(accountId);
     }
 
-    private Account checkAccountById(UUID accountId) {
+    private Account findAccount(UUID accountId) {
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+    }
+
+    private Account findAccountOwnedByUser(UUID accountId, String username) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        if (!account.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You are not the owner of this account");
+        }
+
+        return account;
     }
 }

@@ -10,7 +10,7 @@ import java.util.UUID;
 @Service
 public interface TransactionService {
 
-    Transaction transfer(TransferRequest request);
+    Transaction transfer(TransferRequest request, String username);
 
-    List<Transaction> history(UUID accountId);
+    List<Transaction> history(UUID accountId, String username);
 }

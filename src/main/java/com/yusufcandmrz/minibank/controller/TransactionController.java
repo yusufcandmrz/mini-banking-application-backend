@@ -4,6 +4,7 @@ import com.yusufcandmrz.minibank.dto.request.TransferRequest;
 import com.yusufcandmrz.minibank.entity.Transaction;
 import com.yusufcandmrz.minibank.service.TransactionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,14 +21,14 @@ public class TransactionController {
     }
 
     @PostMapping(name = "/transfer")
-    public ResponseEntity<Transaction> transfer(@RequestBody TransferRequest request) {
-        Transaction transaction = transactionService.transfer(request);
+    public ResponseEntity<Transaction> transfer(@RequestBody TransferRequest request, Authentication authentication) {
+        Transaction transaction = transactionService.transfer(request, authentication.getName());
         return ResponseEntity.ok(transaction);
     }
 
-    @GetMapping(name = "/account/{accountId}")
-    public ResponseEntity<List<Transaction>> history(@PathVariable UUID accountId) {
-        List<Transaction> transactionList = transactionService.history(accountId);
+    @GetMapping(name = "/account/{id}")
+    public ResponseEntity<List<Transaction>> history(@PathVariable UUID id, Authentication authentication) {
+        List<Transaction> transactionList = transactionService.history(id, authentication.getName());
         return ResponseEntity.ok(transactionList);
     }
 }
